@@ -102,7 +102,7 @@ public class SmartFoxManager : MonoBehaviour
                 }
                 
             }
-            
+            sfs.Connect(cfg);
         }
 
     }
@@ -112,6 +112,18 @@ public class SmartFoxManager : MonoBehaviour
         // As Unity is not thread safe, we process the queued up callbacks on every frame
         if (sfs != null)
             sfs.ProcessEvents();
+    }
+    void OnApplicationQuit()
+    {
+        if(sfs!=null&&_room!=null)
+        {
+            sfs.Send(new Sfs2X.Requests.LeaveRoomRequest(_room));
+            sfs.Send(new Sfs2X.Requests.LogoutRequest());
+            Debug.Log("Server Closing");
+            Debug.Log("Application ending after " + Time.time + " seconds");
+        }
+       
+       
     }
 
     private void reset()
