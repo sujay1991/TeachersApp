@@ -103,7 +103,7 @@ public class SmartFoxManager : MonoBehaviour
 
     public void SendOptions()
     {
-        sfs.Send(new Sfs2X.Requests.PublicMessageRequest("Options=[\"Option 1\",\"Option 2\",\"Option 3\"]"));
+        sfs.Send(new Sfs2X.Requests.PublicMessageRequest("Options:[\"Option 1\",\"Option 2\",\"Option 3\"]"));
     }
 
     private void OnConnection(BaseEvent evt)
@@ -203,7 +203,12 @@ public class SmartFoxManager : MonoBehaviour
 
     private void OnPublicMessage(BaseEvent evt)
     {
-        Debug.Log("OnPublicMessage: " + evt.ToString());
+        var message = (string)evt.Params["message"];
+        Debug.Log("OnPublicMessage: " + message);
+        if(message.StartsWith("Answer"))
+        {
+
+        }
     }
 
     private void OnRoomVariableUpdated(BaseEvent evt)
