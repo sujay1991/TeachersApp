@@ -6,6 +6,7 @@ using Sfs2X.Logging;
 using Sfs2X.Util;
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,10 +22,16 @@ public class SmartFoxManager : MonoBehaviour
 
     private int httpPort = 8080;                // HTTP port (for BlueBox connection)
     private int httpsPort = 8443;				// HTTPS port (for protocol encryption initialization in non-websocket connections)
-
+    private List<String> questions = new List<String>();
     private SmartFox sfs;
     private SFSRoom _room;
     private int _numStudents;
+    private struct Question
+    {
+        public string value;
+        public List<string> answers;
+    }
+    private List<Question> _questions = new List<Question>();
 
     void Start()
     {
@@ -60,9 +67,42 @@ public class SmartFoxManager : MonoBehaviour
             cfg.HttpsPort = httpsPort;
             cfg.Zone = "BasicExamples";
             cfg.Debug = debugMode;
+           
+            TextAsset textAsset = (TextAsset)Resources.Load("community_challenge");
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.LoadXml(textAsset.text);
+            //Read
 
-            // Connect to SFS2X
-            sfs.Connect(cfg);
+            XmlNode root = xmldoc.LastChild.FirstChild;
+            Debug.Log("name is"+root.Name);
+            foreach (XmlNode node in root.ChildNodes)
+            {
+                Debug.Log("Children: " + node.ChildNodes);
+                //Debug.Log("Outisde if"+node.FirstChild.NodeType);
+                if (node.Name.CompareTo("question") ==0)
+                {
+                    
+                    foreach (XmlNode node1 in node.ChildNodes)
+                    {
+                        //Debug.Log("answer count+ "+node1.ChildNodes.Count);
+                        var newquestion = new Question();
+                        newquestion.value = node1.Attributes["value"].Value;
+                        newquestion.answers = new List<string>();
+                        foreach (XmlNode node2 in node1.ChildNodes)
+                        {
+                            
+                            newquestion.answers.Add(node2.Attributes["type"].Value);
+                        }
+                        _questions.Add(newquestion);
+                        
+                        
+                    }
+                    
+
+                }
+                
+            }
+            
         }
 
     }
