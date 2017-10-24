@@ -1,0 +1,60 @@
+/Video Backups/
+
+/Assets/Bundled Assets/Book Images halved/
+Book Images halved.meta
+/Assets/Bundled Assets/Video/*.mov
+/Assets/Bundled Assets/Video/*.mp4
+/Assets/_StreamingAssets/
+/iOSAssetBundles5/*
+/AndroidAssetBundles5/*
+/WebGLAssetBundles5/*
+/AssetBundles5/*
+/AudioFiles/*
+/Assets/Resources/AudioTest/*
+
+
+!/Assets/Bundled Assets/*.meta
+
+!/Assets/Resources/*.meta
+
+
+/Assets/TempAssets/
+/Assets/TempAssets.meta
+
+# =============== #
+# Unity generated #
+# =============== #
+/Library/
+/Temp/
+/Obj/
+/obj/
+/UnityGenerated/
+ 
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+/ExportedObj/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+ 
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Assets/Art/GUI/MicrophoneSetup/Thumbs.db.meta
+Assets/Lobby/Skin/Thumbs.db.meta
+Assets/Assembly-CSharp-firstpass.pidb.meta
+Assets/Assembly-CSharp.pidb.meta
