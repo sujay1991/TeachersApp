@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <header>
+    <type value="challenge" />
+    <title
+        short_descr="Community Challenges for Students"
+        info="Put more info here for example a story or math formula.!!!!
+            or you could say most anything but remember you should be nice"
+        num_questions="5"
+        value="Community Service"
+        course_code="1001"/>
+    <question>
+      <question_text
+          correct="HP"
+          hint="x"
+               
+          num_answers="3"
+          question_num="1"
+          value="What community service do you want to participate in?">
+        <answer_a
+            filename="a"
+            hint="x"
+            question_num="1"
+            type="Collecting litter from field" />
+        <answer_b
+            filename="b"
+            hint="x"
+            question_num="1"
+            type="Make sandwiches for homeless shelter"
+            next_question="2"/>
+        <answer_c
+            filename="c"
+            hint="x"
+            question_num="1"
+            type="Launch a car wash fundraiser" />
+      </question_text>
+
+      <question_text
+          correct="x"
+          hint="x"
+          next_question="x"
+          num_answers="4"
+          question_num="2"
+          value="What ingredients are you going to bring?">
+        <answer_a
+            filename="a"
+            hint="x"
+            question_num="1"
+            type="Bread" />
+        <answer_b
+            filename="b"
+            hint="x"
+            question_num="1"
+            type="Lettuce" />
+        <answer_c
+            filename="c"
+            hint="x"
+            question_num="1"
+            type="Tomatoes" />
+        <answer_d
+            filename="d"
+            hint="x"
+            question_num="1"
+            type="Bacon" />
+      </question_text>
+    </question>
+  </header>
+</resources>
