@@ -16,6 +16,16 @@ public class SmartFoxManager : MonoBehaviour
     public Text numStudentsValue;
     public Button startGameButton;
 
+    public Transform questionsContent;
+    public Button questionMold;
+
+    public GameObject startScreen;
+    public GameObject answersScreen;
+    public GameObject questionSelectionScreen;
+
+    public Text currentQuestion;
+    public List<Text> numAnswers;
+
     private string defaultHost = "smartfox.scholastic-labs.io";
     private int defaultTcpPort = 443;
     private int defaultWsPort = 8080;
@@ -28,6 +38,7 @@ public class SmartFoxManager : MonoBehaviour
     private int _numStudents;
     private struct Question
     {
+        public int id;
         public string value;
         public List<string> answers;
     }
@@ -81,30 +92,56 @@ public class SmartFoxManager : MonoBehaviour
                 //Debug.Log("Outisde if"+node.FirstChild.NodeType);
                 if (node.Name.CompareTo("question") ==0)
                 {
-                    
+                    int id = 1;
                     foreach (XmlNode node1 in node.ChildNodes)
                     {
                         //Debug.Log("answer count+ "+node1.ChildNodes.Count);
                         var newquestion = new Question();
                         newquestion.value = node1.Attributes["value"].Value;
                         newquestion.answers = new List<string>();
+                        newquestion.id = id;
+                        id++;
                         foreach (XmlNode node2 in node1.ChildNodes)
                         {
-                            
                             newquestion.answers.Add(node2.Attributes["type"].Value);
                         }
+                        if(questionsContent != null && questionMold != null)
+                        {
+                            var newQuestionButton = Instantiate(questionMold, questionsContent);
+                            var buttonScript = newQuestionButton.GetComponent<Button>();
+                            var buttonText = buttonScript.transform.GetComponentInChildren<Text>();
+                            if(buttonText!=null)
+                            {
+                                buttonText.text = newquestion.value;
+                            }
+                            buttonScript.gameObject.SetActive(true);
+                            buttonScript.name = newquestion.id.ToString();
+                            buttonScript.onClick.AddListener(delegate { SelectQuestion(newquestion.id); });
+                        }
                         _questions.Add(newquestion);
-                        
-                        
                     }
-                    
-
-                }
-                
+                }   
             }
             sfs.Connect(cfg);
         }
+    }
 
+    void SelectQuestion(int questionId)
+    {
+        Debug.Log("QuestionSelected = " + questionId);
+        //TODO: send the answers to the kids
+        var quest = _questions.Find(a => a.id == questionId);
+        string message = "Options:[\"";
+        message += string.Join("\",\"", quest.answers.ToArray());
+        message += "\"]";
+        sfs.Send(new Sfs2X.Requests.PublicMessageRequest(message));
+        questionSelectionScreen.SetActive(false);
+        answersScreen.SetActive(true);
+        currentQuestion.text = quest.value;
+        foreach(var studNum in numAnswers)
+        {
+            studNum.text = "0";
+        }
     }
 
     void Update()
@@ -151,6 +188,8 @@ public class SmartFoxManager : MonoBehaviour
     public void StartGame()
     {
         Debug.Log("Start the game");
+        startScreen.SetActive(false);
+        questionSelectionScreen.SetActive(true);
     }
 
     public void SendOptions()
@@ -228,6 +267,8 @@ public class SmartFoxManager : MonoBehaviour
         roomVars.Add(new SFSRoomVariable("gameStarted", false));
         sfs.Send(new Sfs2X.Requests.SetRoomVariablesRequest(roomVars));
 
+        UpdateNumOfStudents(_room.GetVariable("numStudents").GetIntValue());
+
         /*var reqParams = new Sfs2X.Entities.Data.SFSObject();
         reqParams.PutInt("a", 25);
         reqParams.PutInt("b", 17);
@@ -257,9 +298,15 @@ public class SmartFoxManager : MonoBehaviour
     {
         var message = (string)evt.Params["message"];
         Debug.Log("OnPublicMessage: " + message);
-        if(message.StartsWith("Answer"))
+        if(message.StartsWith("Answer:"))
         {
-
+            var temp1 = message.Split(':');
+            var temp2 = temp1[1].Split(',');
+            Debug.Log("answer num = " + temp2[1]);
+            string result = temp2[1].Replace("]", "");
+            int answer = Convert.ToInt32(result);
+            var numStr = numAnswers[answer - 1].text;
+            numAnswers[answer - 1].text = (Convert.ToInt32(numStr) + 1).ToString();
         }
     }
 
@@ -282,13 +329,18 @@ public class SmartFoxManager : MonoBehaviour
 
         if (changedVars.Contains("numStudents"))
         {
-            _numStudents = room.GetVariable("numStudents").GetIntValue();
-            Debug.Log("Received updated numStudents = " + _numStudents);
-            numStudentsValue.text = _numStudents.ToString();
-            if(_numStudents > 0)
-            {
-                startGameButton.enabled = true;
-            }
+            UpdateNumOfStudents(room.GetVariable("numStudents").GetIntValue());
+        }
+    }
+
+    private void UpdateNumOfStudents(int num)
+    {
+        _numStudents = num;
+        Debug.Log("Received updated numStudents = " + _numStudents);
+        numStudentsValue.text = _numStudents.ToString();
+        if (_numStudents > 0)
+        {
+            startGameButton.interactable = true;
         }
     }
 
